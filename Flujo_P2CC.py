@@ -153,7 +153,16 @@ LimpiarCSVEntorno = BashOperator(
     bash_command='rm /tmp/workflow/temperature.csv; rm /tmp/workflow/humidity.csv',
     dag=dag
 )
-# Tarea 7: Iniciamos el servicio de MAriaDB
+
+# Tarea 7: Paramos todos los servicios si estaban en ejecución
+PararServicios = BashOperator(
+    task_id='PararServicios',
+    depends_on_past=False,
+    bash_command='docker-compose -f ~/airflow/dags/CC1920-Practica2/docker-compose.yml down ',
+    dag=dag,
+)
+
+# Tarea 8: Iniciamos el servicio de MariaDB
 IniciarBD = BashOperator(
     task_id='IniciarDB',
     depends_on_past=False,
@@ -161,9 +170,10 @@ IniciarBD = BashOperator(
     dag=dag,
 )
 
-# Tarea 8: Almacenamos los datos en la Base de Datos
+# Tarea 9: Almacenamos los datos en la Base de Datos
 AlmacenarDatos = PythonOperator(
     task_id='AlmacenarDatos',
+    depends_on_past=False,
     python_callable=AlmacenarDatos,
     dag=dag,
 )
@@ -177,5 +187,6 @@ DescomprimirTemperatura.set_upstream(DescargarTemperatura)
 LimpiarZIPEntorno.set_upstream([DescomprimirHumedad, DescomprimirTemperatura])
 CombinarDatos.set_upstream(LimpiarZIPEntorno)
 LimpiarCSVEntorno.set_upstream(CombinarDatos)
-IniciarBD.set_upstream(LimpiarCSVEntorno)
+PararServicios.set_upstream(LimpiarCSVEntorno)
+IniciarBD.set_upstream(PararServicios)
 AlmacenarDatos.set_upstream(IniciarBD)
