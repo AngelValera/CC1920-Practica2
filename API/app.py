@@ -1,21 +1,21 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 ### --------------------------------------
-### API Servicio 1 - Arima
+### API Servicio 2 - API
 ### Angel Valera Motos - P2 - CC
 ### --------------------------------------
 
 # Framework Flask
 from flask import Flask, jsonify, Response
-from prediccion1 import PrediccionArima
-prediccion = PrediccionArima()
+from prediccion2 import PrediccionArima
+prediccion = PrediccionAPI()
 
 app = Flask(__name__)
 
 #------------------------------------------------------------------------------------------------------------------
 @app.route("/")
 def index():
-    return Response("Versión 1: Predicción de temperatura y humedad utilizando ARIMA.", status=200)
+    return Response("Versión 2: Predicción de temperatura y humedad utilizando una API.", status=200)
 #------------------------------------------------------------------------------------------------------------------
 # Ruta para obtener la predicción de la versión 1 del servicio dependiendo de la hora
 @app.route('/servicio/v1/prediccion/<num>horas', methods=['GET'])

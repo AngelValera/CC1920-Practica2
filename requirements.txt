@@ -1,6 +1,4 @@
-Flask
-pmdarima
-pandas
-sqlalchemy
-pymysql
+flask
 gunicorn
+requests
+pyopenssl
