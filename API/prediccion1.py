@@ -18,7 +18,7 @@ class PrediccionArima:
     # y extraemos una muestra de 1000 datos
     def __init__(self):
         sqlEngine = db.create_engine(
-            'mysql+pymysql://angelvm:003577@127.0.0.1/SanFrancisco', pool_recycle=3600)
+            'mysql+pymysql://angelvm:003577@'+os.environ["HOST"]+'/SanFrancisco', pool_recycle=3600)
         dbConnection = sqlEngine.connect()    
         metadata = db.MetaData()
         DatosTemHum = db.Table(

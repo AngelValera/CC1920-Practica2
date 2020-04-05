@@ -7,8 +7,8 @@
 
 # Framework Flask
 from flask import Flask, jsonify, Response
-import prediccion1
-prediccion = prediccion1.PrediccionArima()
+from prediccion1 import PrediccionArima
+prediccion = PrediccionArima()
 
 app = Flask(__name__)
 
@@ -30,4 +30,4 @@ def ObtenerPrediccionV1(num):
 #------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
-	app.run(debug=True, port=4000  )
+	app.run(host="localhost", debug=True, port=4000  )

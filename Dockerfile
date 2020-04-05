@@ -2,7 +2,9 @@
 FROM python:3.6
 
 RUN mkdir /PrimerServicio
+RUN mkdir /PrimerServicio/Models
 WORKDIR /PrimerServicio
 COPY requirements.txt /PrimerServicio/
-RUN pip install -r requirements.txt
-ADD API /PrimerServicio/API
+RUN apt-get update && pip install --upgrade pip && pip install --requirement requirements.txt
+COPY API/* /PrimerServicio/
+COPY API/Models/* /PrimerServicio/Models/ 
