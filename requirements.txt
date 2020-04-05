@@ -1,0 +1,6 @@
+Flask
+pmdarima
+pandas
+sqlalchemy
+pymysql
+gunicorn
