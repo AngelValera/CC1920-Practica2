@@ -154,13 +154,21 @@ LimpiarCSVEntorno = BashOperator(
     dag=dag
 )
 
-# Tarea 7: Paramos todos los servicios si estaban en ejecución
+# Tarea 7: Paramos todos los servicios si estaban en ejecución y montamos contenedores
 PararServicios = BashOperator(
     task_id='PararServicios',
     depends_on_past=False,
     bash_command='docker-compose -f ~/airflow/dags/CC1920-Practica2/docker-compose.yml down ',
     dag=dag,
 )
+
+ConstruirServicios = BashOperator(
+    task_id='ConstruirServicios',
+    depends_on_past=False,
+    bash_command='docker-compose -f ~/airflow/dags/CC1920-Practica2/docker-compose.yml build ',
+    dag=dag,
+)
+
 
 # Tarea 8: Iniciamos el servicio de MariaDB
 IniciarBD = BashOperator(
@@ -188,5 +196,6 @@ LimpiarZIPEntorno.set_upstream([DescomprimirHumedad, DescomprimirTemperatura])
 CombinarDatos.set_upstream(LimpiarZIPEntorno)
 LimpiarCSVEntorno.set_upstream(CombinarDatos)
 PararServicios.set_upstream(LimpiarCSVEntorno)
+ConstruirServicios.set_upstream(ConstruirServicios)
 IniciarBD.set_upstream(PararServicios)
 AlmacenarDatos.set_upstream(IniciarBD)
