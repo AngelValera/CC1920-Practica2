@@ -35,8 +35,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql
       - backup:/var/lib/backup
-    networks: 
-      - default
+
 
   
 
