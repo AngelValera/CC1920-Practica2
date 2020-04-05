@@ -192,7 +192,7 @@ CapturaCodigoFuenteV1 = BashOperator(
 TestServicioV1 = BashOperator(
     task_id='TestServicioV1',
     depends_on_past=False,
-    bash_command='export HOST=localhost && cd /tmp/workflow/servicioV1/API/Test && pytest',
+    bash_command='export HOST=localhost && cd /tmp/workflow/servicioV1/API && pytest Test_v1.py',
     dag=dag,
 )
 
