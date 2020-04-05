@@ -36,6 +36,14 @@ services:
       - mysql:/var/lib/mysql
       - backup:/var/lib/backup
 
-
+  version1:
+    build: /tmp/workflow/servicioV1/
+    command: gunicorn app:app -b :4000
+    environment:
+      - HOST=MariaDB
+    ports:
+      - 4000:4000
+    links: 
+      - MariaDB
   
 
