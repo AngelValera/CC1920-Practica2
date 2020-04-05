@@ -1,6 +1,6 @@
 ### --------------------------------------
 ### Airflow scheduler
-### Angel Valera Motos - P2 - CC 
+### Angel Valera Motos - P2 - CC
 ### --------------------------------------
 ###
 
@@ -15,11 +15,11 @@ import requests
 import os
 from sqlalchemy import create_engine
 import sqlalchemy.dialects.mysql.pymysql
-import pandas 
+import pandas
 
 # Inluir biliotecas PIP
 
-# Definimos los argumentos del DAG 
+# Definimos los argumentos del DAG
 # -------------------------------------------------------------------------------------------------
 default_args = {
     'owner': 'airflow',
@@ -42,6 +42,8 @@ dag = DAG(
 )
 # Funciones auxiliares
 # -------------------------------------------------------------------------------------------------
+
+
 def prepararDirectorio(pathDir):
     if not os.path.isdir(pathDir):
        os.mkdir(pathDir)
@@ -61,9 +63,6 @@ def limpiarYCombinarDatos():
     NuevoDF = pandas.merge(DF_Temp, DF_Hum, on='DATE')
     # Borrar los NaN:
     NuevoDF = NuevoDF.dropna()
-    # Para aligerar el procesamiento vamos a seleccionar solo 1000 muestras 
-    # del conjunto de datos de manera aleatoria
-    NuevoDF = NuevoDF.sample(n=1000, random_state=1)
     # Exportamos el nuevo DataFrame a fichero CSV
     NuevoDF.to_csv(r'/tmp/workflow/datos.csv', index=False)
 
@@ -85,10 +84,11 @@ def AlmacenarDatos():
     finally:
         dbConnection.close()
 
+
 # -------------------------------------------------------------------------------------------------
 # Tarea 1: Preparar entorno
 PrepararEntorno = PythonOperator(
-    task_id='PrepararEntorno',   
+    task_id='PrepararEntorno',
     python_callable=prepararDirectorio,
     op_kwargs={'pathDir': '/tmp/workflow/'},
     dag=dag,
@@ -97,9 +97,9 @@ PrepararEntorno = PythonOperator(
 # Tarea 2-A: Descargar datos de Humedad
 DescargarHumedad = BashOperator(
     task_id='DescargarHumedad',
-    depends_on_past=False,    
+    depends_on_past=False,
     bash_command='wget --output-document /tmp/workflow/humidity.csv.zip https://github.com/manuparra/MaterialCC2020/raw/master/humidity.csv.zip',
-    
+
     dag=dag
 )
 
@@ -111,7 +111,7 @@ DescargarTemperatura = BashOperator(
     dag=dag
 )
 
-# Tarea 3-A: Descomprimir datos de humedad 
+# Tarea 3-A: Descomprimir datos de humedad
 DescomprimirHumedad = BashOperator(
     task_id='DescomprimirHumedad',
     depends_on_past=False,
@@ -141,7 +141,7 @@ LimpiarZIPEntorno = BashOperator(
 # Tarea 5: Combinar ficheros csv
 CombinarDatos = PythonOperator(
     task_id='CombinarDatos',
-    python_callable=limpiarYCombinarDatos,   
+    python_callable=limpiarYCombinarDatos,
     dag=dag,
 )
 
@@ -186,10 +186,38 @@ AlmacenarDatos = PythonOperator(
     dag=dag,
 )
 
+# Tarea 10: Descargamos el código fuente del primer servicio
+
+CapturaCodigoFuenteV1 = BashOperator(
+    task_id='CapturaCodigoFuenteV1',
+    depends_on_past=False,
+    bash_command='rm -rf /tmp/workflow/servicioV1/ ;git clone -b servicio-V1 https://github.com/AngelValera/CC1920-Practica2.git /tmp/workflow/servicioV1',
+    dag=dag,
+)
+
+# Tarea 11: Testeamos el primer servicio
+
+TestServicioV1 = BashOperator(
+    task_id='TestServicioV1',
+    depends_on_past=False,
+    bash_command='export HOST=localhost && cd /tmp/workflow/servicioV1/API && pytest Test_v1.py',
+    dag=dag,
+)
+
+
+LevantarServicioV1 = BashOperator(
+    task_id='LevantarServicioV1',
+    depends_on_past=False,
+    bash_command='docker-compose -f ~/airflow/dags/CC1920-Practica2/docker-compose.yml up -d version1',
+    dag=dag,
+)
+
+
+
 
 # DEPENDENCIAS
 # -------------------------------------------------------------------------------------------------
-PrepararEntorno.set_downstream([DescargarHumedad, DescargarTemperatura])
+PrepararEntorno.set_downstream([CapturaCodigoFuenteV1, DescargarHumedad, DescargarTemperatura])
 DescomprimirHumedad.set_upstream(DescargarHumedad)
 DescomprimirTemperatura.set_upstream(DescargarTemperatura)
 LimpiarZIPEntorno.set_upstream([DescomprimirHumedad, DescomprimirTemperatura])
@@ -199,3 +227,5 @@ PararServicios.set_upstream(LimpiarCSVEntorno)
 ConstruirServicios.set_upstream(ConstruirServicios)
 IniciarBD.set_upstream(PararServicios)
 AlmacenarDatos.set_upstream(IniciarBD)
+TestServicioV1.set_upstream([AlmacenarDatos, CapturaCodigoFuenteV1])
+LevantarServicioV1.set_upstream(TestServicioV1)
