@@ -1,6 +1,7 @@
-# CC1920-Practica2
-Máster de Ingeniería Informática.
+# Servicio de predicción : Versión 1
 
-Curso 2019-2020.
+Esta es la primera versión del servicio de predicción de temperatura y humedad. 
 
-Repositorio para la práctica 2 de la asignatura de Cloud Computing.
+En esta versión se emplea el algoritmo Arima para realizar dicha predicción.
+
+
