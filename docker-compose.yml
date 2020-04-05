@@ -1,3 +1,8 @@
+### --------------------------------------
+### Docker-compose
+### Angel Valera Motos - P2 - CC 
+### --------------------------------------
+###
 version: '3'
 
 volumes:
@@ -9,6 +14,7 @@ volumes:
     driver: local 
 
 services:
+  # Servicio con base de datos MariaDB 
   MariaDB:
     image: webhippie/mariadb:latest
     restart: always
@@ -29,6 +35,8 @@ services:
     volumes:
       - mysql:/var/lib/mysql
       - backup:/var/lib/backup
+    networks: 
+      - default
 
   
 
