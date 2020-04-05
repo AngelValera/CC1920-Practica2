@@ -1,4 +1,4 @@
-# Servicio de predicción : Versión 1
+# Servicio de predicción : Versión 2
 
 Esta es la primera versión del servicio de predicción de temperatura y humedad. 
 
