@@ -179,7 +179,6 @@ AlmacenarDatos = PythonOperator(
 )
 
 # Tarea 10: Descargamos el código fuente del primer servicio
-
 CapturaCodigoFuenteV1 = BashOperator(
     task_id='CapturaCodigoFuenteV1',
     depends_on_past=False,
@@ -188,7 +187,6 @@ CapturaCodigoFuenteV1 = BashOperator(
 )
 
 # Tarea 11: Testeamos el primer servicio
-
 TestServicioV1 = BashOperator(
     task_id='TestServicioV1',
     depends_on_past=False,
@@ -196,11 +194,35 @@ TestServicioV1 = BashOperator(
     dag=dag,
 )
 
-
+# Tarea 12: Levanto primer servicio
 LevantarServicioV1 = BashOperator(
     task_id='LevantarServicioV1',
     depends_on_past=False,
     bash_command='docker-compose -f ~/airflow/dags/CC1920-Practica2/docker-compose.yml up -d version1',
+    dag=dag,
+)
+
+# Tarea 13: Descargamos el código fuente del segundo servicio
+CapturaCodigoFuenteV2 = BashOperator(
+    task_id='CapturaCodigoFuenteV2',
+    depends_on_past=False,
+    bash_command='rm -rf /tmp/workflow/servicioV2/ ;git clone -b servicio-V2 https://github.com/AngelValera/CC1920-Practica2.git /tmp/workflow/servicioV2',
+    dag=dag,
+)
+
+# Tarea 14: Testeamos el segundo servicio
+TestServicioV2 = BashOperator(
+    task_id='TestServicioV2',
+    depends_on_past=False,
+    bash_command='export API_KEY="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhdmFsZXJhbUBjb3JyZW8udWdyLmVzIiwianRpIjoiNTdkMjAxZjMtYWFhNy00MDI4LTg0ZmYtZGYxNjAyZGZlMWIzIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE1ODYxMTQ5NzIsInVzZXJJZCI6IjU3ZDIwMWYzLWFhYTctNDAyOC04NGZmLWRmMTYwMmRmZTFiMyIsInJvbGUiOiIifQ.NddscPjToIAsraXAr-ULIp0nhzv-uPH67zAtmVuiUS4" && cd /tmp/workflow/servicioV2/API && pytest Test_v2.py',
+    dag=dag,
+)
+
+# Tarea 15: Levanto segundo servicio
+LevantarServicioV2 = BashOperator(
+    task_id='LevantarServicioV2',
+    depends_on_past=False,
+    bash_command='docker-compose -f ~/airflow/dags/CC1920-Practica2/docker-compose.yml up -d version2',
     dag=dag,
 )
 
@@ -209,7 +231,7 @@ LevantarServicioV1 = BashOperator(
 
 # DEPENDENCIAS
 # -------------------------------------------------------------------------------------------------
-PrepararEntorno.set_downstream([CapturaCodigoFuenteV1, DescargarHumedad, DescargarTemperatura])
+PrepararEntorno.set_downstream([CapturaCodigoFuenteV1, CapturaCodigoFuenteV2, DescargarHumedad, DescargarTemperatura])
 DescomprimirHumedad.set_upstream(DescargarHumedad)
 DescomprimirTemperatura.set_upstream(DescargarTemperatura)
 LimpiarZIPEntorno.set_upstream([DescomprimirHumedad, DescomprimirTemperatura])
@@ -220,3 +242,5 @@ IniciarBD.set_upstream(PararServicios)
 AlmacenarDatos.set_upstream(IniciarBD)
 TestServicioV1.set_upstream([AlmacenarDatos, CapturaCodigoFuenteV1])
 LevantarServicioV1.set_upstream(TestServicioV1)
+TestServicioV2.set_upstream([CapturaCodigoFuenteV2])
+LevantarServicioV2.set_upstream(TestServicioV2)

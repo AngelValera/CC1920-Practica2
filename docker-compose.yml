@@ -46,4 +46,11 @@ services:
     links: 
       - MariaDB
   
+  version2:
+    build: /tmp/workflow/servicioV2/
+    command: gunicorn app:app -b :5000
+    environment:
+      - API_KEY= "api-key"
+    ports:
+      - 5000:5000
 
