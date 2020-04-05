@@ -1,0 +1,34 @@
+version: '3'
+
+volumes:
+  files:
+    driver: local
+  mysql:
+    driver: local
+  backup:
+    driver: local 
+
+services:
+  MariaDB:
+    image: webhippie/mariadb:latest
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=master
+      - MARIADB_USERNAME=angelvm
+      - MARIADB_PASSWORD=003577
+      - MARIADB_DATABASE=SanFrancisco
+      - MARIADB_MAX_ALLOWED_PACKET=128M
+      - MARIADB_INNODB_LOG_FILE_SIZE=64M
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - mysql:/var/lib/mysql
+      - backup:/var/lib/backup
+
+  
+
