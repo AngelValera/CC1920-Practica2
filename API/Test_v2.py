@@ -8,9 +8,9 @@ import sys
 import unittest
 import pytest
 import app
-import prediccion1
+import prediccion2
 
-prediccion = prediccion1.PrediccionArima()
+prediccion = prediccion2.PrediccionAPI()
 app = app.app.test_client()
 
 class Test_Predicciones(unittest.TestCase):

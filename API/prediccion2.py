@@ -11,12 +11,11 @@ from datetime import datetime, timedelta
 import time
 
 api_key = os.environ["API_KEY"]
-headers = {'api_key': api_key}
 
 class PrediccionAPI:
     def __init__(self):        
         request = requests.get(
-            'https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/18087', verify=False, headers=headers)
+            'https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/18087', verify=False, headers={'api_key': api_key})
         requestJSON = request.json()
         dataRequest = requests.get(requestJSON["datos"], verify=False)
         self.Datos = dataRequest.json()
@@ -38,22 +37,21 @@ class PrediccionAPI:
                 periodoT.append(val["periodoT"])
                 temperatura.append(val["value"])
             for val in self.data[0]["prediccion"]["dia"][n]["humedadRelativa"]:
-                humedad.append(val["value"])     
-
+                humedad.append(val["value"]) 
         total = len(periodoT)
-        s = '{ "origen": '+json.dumps(self.data[0]["origen"])+', "forecast": ['
+        resultado = '{ "origen": '+json.dumps(self.data[0]["origen"])+', "forecast": ['
         for n in range(tiempo):
             fecha = self.data[0]["prediccion"]["dia"][n]["fecha"]
-            s += '{ "date": "'+fecha+'", "values": ['
+            resultado += '{ "date": "'+fecha+'", "values": ['
             for i in range(total):
-                s += '{"hour" : "' + \
+                resultado += '{"hour" : "' + \
                     periodoT[i]+':00", "temp": ' + \
                     temperatura[i]+', "hum": '+humedad[i]+'}'
                 if i != total-1:
-                    s += ","
-            s += ']}'
+                    resultado += ","
+            resultado += ']}'
             if n != tiempo-1:
-                s += ","
-        s += ']}'
-        return json.loads(s),200       
+                resultado += ","
+        resultado += ']}'
+        return json.loads(resultado), 200
     
