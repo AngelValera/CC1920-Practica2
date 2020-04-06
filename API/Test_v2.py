@@ -20,15 +20,15 @@ class Test_Predicciones(unittest.TestCase):
             assert prediccion.ObtenerPrediccion('Prueba')
              
     def test2_ObtenerPredicciones24(self):
-        respuesta = app.get('/servicio/v1/prediccion/24horas')
+        respuesta = app.get('/servicio/v2/prediccion/24horas')
         assert (respuesta.status_code == 200)
 
     def test3_ObtenerPredicciones48(self):
-        respuesta = app.get('/servicio/v1/prediccion/48horas')
+        respuesta = app.get('/servicio/v2/prediccion/48horas')
         assert (respuesta.status_code == 200)
 
     def test4_ObtenerPredicciones72(self):
-        respuesta = app.get('/servicio/v1/prediccion/72horas')
+        respuesta = app.get('/servicio/v2/prediccion/72horas')
         assert (respuesta.status_code == 200)  
     
 if __name__ == '__main__':
