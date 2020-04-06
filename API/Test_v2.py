@@ -8,9 +8,9 @@ import sys
 import unittest
 import pytest
 import app
-import prediccion2
+from prediccion2 import PrediccionAPI
 
-prediccion = prediccion2.PrediccionAPI()
+prediccion = PrediccionAPI()
 app = app.app.test_client()
 
 class Test_Predicciones(unittest.TestCase):
@@ -30,6 +30,6 @@ class Test_Predicciones(unittest.TestCase):
     def test4_ObtenerPredicciones72(self):
         respuesta = app.get('/servicio/v1/prediccion/72horas')
         assert (respuesta.status_code == 200)  
-
+    
 if __name__ == '__main__':
     pytest.main()
