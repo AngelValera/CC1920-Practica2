@@ -16,8 +16,8 @@ querystring = {"api_key":  os.environ["API_KEY"]}
 class PrediccionAPI:
     def __init__(self):        
         request = response = requests.request(
-            "GET", url, headers=headers, params=querystring)
-        requestJSON = request.json()
+            "GET", url, headers=headers, params=querystring, verify=False)
+        requestJSON = request.json()        
         dataRequest = requests.get(requestJSON["datos"], verify=False)
         self.Datos = dataRequest.json()
         
