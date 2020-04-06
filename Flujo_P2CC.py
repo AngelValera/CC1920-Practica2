@@ -217,7 +217,7 @@ CapturaCodigoFuenteV2 = BashOperator(
     bash_command='rm -rf /tmp/workflow/servicioV2/ ;git clone -b servicio-V2 https://github.com/AngelValera/CC1920-Practica2.git /tmp/workflow/servicioV2',
     dag=dag,
 )
-
+ 
 # Tarea 14: Testeamos el segundo servicio
 TestServicioV2 = BashOperator(
     task_id='TestServicioV2',
@@ -234,9 +234,6 @@ LevantarServicioV2 = BashOperator(
     dag=dag,
 )
 
-
-
-
 # DEPENDENCIAS
 # -------------------------------------------------------------------------------------------------
 PrepararEntorno.set_downstream([CapturaCodigoFuenteV1, CapturaCodigoFuenteV2, DescargarHumedad, DescargarTemperatura])
@@ -246,8 +243,8 @@ LimpiarZIPEntorno.set_upstream([DescomprimirHumedad, DescomprimirTemperatura])
 CombinarDatos.set_upstream(LimpiarZIPEntorno)
 LimpiarCSVEntorno.set_upstream(CombinarDatos)
 PararServicios.set_upstream(LimpiarCSVEntorno)
-ConstruirServicios.set_upstream(ConstruirServicios)
-IniciarBD.set_upstream(PararServicios)
+ConstruirServicios.set_upstream(PararServicios)
+IniciarBD.set_upstream(ConstruirServicios)
 AlmacenarDatos.set_upstream(IniciarBD)
 TestServicioV1.set_upstream([AlmacenarDatos, CapturaCodigoFuenteV1])
 LevantarServicioV1.set_upstream(TestServicioV1)

@@ -50,7 +50,7 @@ services:
     build: /tmp/workflow/servicioV2/
     command: gunicorn app:app -b :5000
     environment:
-      - API_KEY= "api-key"
+      - API_KEY=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhdmFsZXJhbUBjb3JyZW8udWdyLmVzIiwianRpIjoiNTdkMjAxZjMtYWFhNy00MDI4LTg0ZmYtZGYxNjAyZGZlMWIzIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE1ODYxMTQ5NzIsInVzZXJJZCI6IjU3ZDIwMWYzLWFhYTctNDAyOC04NGZmLWRmMTYwMmRmZTFiMyIsInJvbGUiOiIifQ.NddscPjToIAsraXAr-ULIp0nhzv-uPH67zAtmVuiUS4
     ports:
       - 5000:5000
 
